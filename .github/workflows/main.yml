@@ -3,7 +3,7 @@ name: Terraform Pipeline
 on:
   push:
     branches:
-      - main  # Change if your default branch is different (e.g., 'master')
+      - main   # Change if your default branch is different (e.g., 'master')
   workflow_dispatch:
     inputs:
       action:
@@ -19,9 +19,6 @@ jobs:
   terraform:
     runs-on: ubuntu-latest
 
-    environment:
-      name: production  # Requires approval; configure this environment in GitHub repository settings
-
     defaults:
       run:
         working-directory: Day-2 Pipeline SCM_Var_Env_Github_Action
@@ -35,7 +32,7 @@ jobs:
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: us-east-1  # Change if needed
+          aws-region: us-east-1  # Change if using another region
 
       - name: Set up Terraform
         uses: hashicorp/setup-terraform@v3
@@ -45,9 +42,12 @@ jobs:
       - name: Terraform Init
         run: terraform init
 
-      - name: Terraform Plan (on push)
-        if: github.event_name == 'push'
+      - name: Terraform Plan
         run: terraform plan
+
+      - name: Terraform Apply
+        if: github.event_name == 'push'
+        run: terraform apply -auto-approve
 
       - name: Terraform Apply/Destroy (manual trigger)
         if: github.event_name == 'workflow_dispatch'
