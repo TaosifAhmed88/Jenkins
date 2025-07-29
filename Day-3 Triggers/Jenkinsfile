@@ -25,7 +25,7 @@ pipeline {
         stage('terraform apply') {
             steps {
                 dir('Day-2 Pipeline SCM_Var_Env_Github_Action') {
-                sh 'terraform ${action} -auto-approve'
+                sh 'terraform apply -auto-approve'
             }
             }
         }
